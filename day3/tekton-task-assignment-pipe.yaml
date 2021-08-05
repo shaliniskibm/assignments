@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: tekton-task-assignment-pipe
+spec:
+  steps:
+    - image: quay.io/ibmgaragecloud/alpine-curl
+      name: pipe
+      resources: {}
+      script: |
+        echo 'pipe step'
+        mkdir k8s
+        cd k8s
+        curl -i https://raw.githubusercontent.com/tektoncd/pipeline/main/examples/v1beta1/taskruns/run-steps-as-non-root.yaml | head -n 40 | sed 's?ubuntu?quay.io/ibmgaragecloud/alpine-curl?g' > tekton-task-assignment-pipe.yaml
+        cat tekton-task-assignment-pipe.yaml

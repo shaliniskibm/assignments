@@ -1,0 +1,162 @@
+[retrieve] retrieve step
+[retrieve] + echo 'retrieve step'
+[retrieve] + mkdir k8s
+[retrieve] + cd k8s
+[retrieve] + curl -i https://raw.githubusercontent.com/tektoncd/pipeline/main/examples/v1beta1/taskruns/run-steps-as-non-root.yaml
+[retrieve]   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+[retrieve]                                  Dload  Upload   Total   Spent    Left  Speed
+[retrieve]   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   751  100   751    0     0  20297      0 --:--:-- --:--:-- --:--:-- 20297
+[retrieve] + cat run-steps-as-non-root.yaml
+[retrieve] HTTP/2 200 
+[retrieve] cache-control: max-age=300
+[retrieve] content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox
+[retrieve] content-type: text/plain; charset=utf-8
+[retrieve] etag: "63f62f8f4119b7b1b017a8750f5a566f25aa58c077932d4d10f42bf19a7e49d8"
+[retrieve] strict-transport-security: max-age=31536000
+[retrieve] x-content-type-options: nosniff
+[retrieve] x-frame-options: deny
+[retrieve] x-xss-protection: 1; mode=block
+[retrieve] x-github-request-id: ED50:6AB2:EC8D2:225514:610B6F1C
+[retrieve] accept-ranges: bytes
+[retrieve] date: Thu, 05 Aug 2021 07:15:53 GMT
+[retrieve] via: 1.1 varnish
+[retrieve] x-served-by: cache-syd10154-SYD
+[retrieve] x-cache: HIT
+[retrieve] x-cache-hits: 1
+[retrieve] x-timer: S1628147753.157464,VS0,VE0
+[retrieve] vary: Authorization,Accept-Encoding
+[retrieve] access-control-allow-origin: *
+[retrieve] x-fastly-request-id: 494a0310facbf536c7a2393a1dbbffdb29378605
+[retrieve] expires: Thu, 05 Aug 2021 07:20:53 GMT
+[retrieve] source-age: 113
+[retrieve] content-length: 751
+[retrieve] 
+[retrieve] apiVersion: tekton.dev/v1beta1
+[retrieve] kind: Task
+[retrieve] metadata:
+[retrieve]   name: show-non-root-steps
+[retrieve] spec:
+[retrieve]   steps:
+[retrieve]     # no securityContext specified so will use
+[retrieve]     # securityContext from TaskRun podTemplate
+[retrieve]     - name: show-user-1001
+[retrieve]       image: ubuntu
+[retrieve]       command:
+[retrieve]         - ps
+[retrieve]       args:
+[retrieve]         - "aux"
+[retrieve]     # securityContext specified so will run as
+[retrieve]     # user 2000 instead of 1001
+[retrieve]     - name: show-user-2000
+[retrieve]       image: ubuntu
+[retrieve]       command:
+[retrieve]         - ps
+[retrieve]       args:
+[retrieve]         - "aux"
+[retrieve]       securityContext:
+[retrieve]         runAsUser: 2000
+[retrieve] ---
+[retrieve] apiVersion: tekton.dev/v1beta1
+[retrieve] kind: TaskRun
+[retrieve] metadata:
+[retrieve]   generateName: show-non-root-steps-run-
+[retrieve] spec:
+[retrieve]   taskRef:
+[retrieve]     name: show-non-root-steps
+[retrieve]   podTemplate:
+[retrieve]     securityContext:
+[retrieve]       runAsNonRoot: true
+[retrieve]       runAsUser: 1001
+
+[extract] + echo 'extract step'
+[extract] extract step
+[extract] + cd k8s
+[extract] + head -n 40 run-steps-as-non-root.yaml
+[extract] + cat run-steps-as-non-root-task-only.yaml
+[extract] HTTP/2 200 
+[extract] cache-control: max-age=300
+[extract] content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox
+[extract] content-type: text/plain; charset=utf-8
+[extract] etag: "63f62f8f4119b7b1b017a8750f5a566f25aa58c077932d4d10f42bf19a7e49d8"
+[extract] strict-transport-security: max-age=31536000
+[extract] x-content-type-options: nosniff
+[extract] x-frame-options: deny
+[extract] x-xss-protection: 1; mode=block
+[extract] x-github-request-id: ED50:6AB2:EC8D2:225514:610B6F1C
+[extract] accept-ranges: bytes
+[extract] date: Thu, 05 Aug 2021 07:15:53 GMT
+[extract] via: 1.1 varnish
+[extract] x-served-by: cache-syd10154-SYD
+[extract] x-cache: HIT
+[extract] x-cache-hits: 1
+[extract] x-timer: S1628147753.157464,VS0,VE0
+[extract] vary: Authorization,Accept-Encoding
+[extract] access-control-allow-origin: *
+[extract] x-fastly-request-id: 494a0310facbf536c7a2393a1dbbffdb29378605
+[extract] expires: Thu, 05 Aug 2021 07:20:53 GMT
+[extract] source-age: 113
+[extract] content-length: 751
+[extract] 
+[extract] apiVersion: tekton.dev/v1beta1
+[extract] kind: Task
+[extract] metadata:
+[extract]   name: show-non-root-steps
+[extract] spec:
+[extract]   steps:
+[extract]     # no securityContext specified so will use
+[extract]     # securityContext from TaskRun podTemplate
+[extract]     - name: show-user-1001
+[extract]       image: ubuntu
+[extract]       command:
+[extract]         - ps
+[extract]       args:
+[extract]         - "aux"
+[extract]     # securityContext specified so will run as
+[extract]     # user 2000 instead of 1001
+
+[swap] swap step
+[swap] + echo 'swap step'
+[swap] + cd k8s
+[swap] + sed 's?ubuntu?quay.io/ibmgaragecloud/alpine-curl?g' run-steps-as-non-root-task-only.yaml
+[swap] + cat run-steps-as-non-root-alpine-task.yaml
+[swap] HTTP/2 200 
+[swap] cache-control: max-age=300
+[swap] content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox
+[swap] content-type: text/plain; charset=utf-8
+[swap] etag: "63f62f8f4119b7b1b017a8750f5a566f25aa58c077932d4d10f42bf19a7e49d8"
+[swap] strict-transport-security: max-age=31536000
+[swap] x-content-type-options: nosniff
+[swap] x-frame-options: deny
+[swap] x-xss-protection: 1; mode=block
+[swap] x-github-request-id: ED50:6AB2:EC8D2:225514:610B6F1C
+[swap] accept-ranges: bytes
+[swap] date: Thu, 05 Aug 2021 07:15:53 GMT
+[swap] via: 1.1 varnish
+[swap] x-served-by: cache-syd10154-SYD
+[swap] x-cache: HIT
+[swap] x-cache-hits: 1
+[swap] x-timer: S1628147753.157464,VS0,VE0
+[swap] vary: Authorization,Accept-Encoding
+[swap] access-control-allow-origin: *
+[swap] x-fastly-request-id: 494a0310facbf536c7a2393a1dbbffdb29378605
+[swap] expires: Thu, 05 Aug 2021 07:20:53 GMT
+[swap] source-age: 113
+[swap] content-length: 751
+[swap] 
+[swap] apiVersion: tekton.dev/v1beta1
+[swap] kind: Task
+[swap] metadata:
+[swap]   name: show-non-root-steps
+[swap] spec:
+[swap]   steps:
+[swap]     # no securityContext specified so will use
+[swap]     # securityContext from TaskRun podTemplate
+[swap]     - name: show-user-1001
+[swap]       image: quay.io/ibmgaragecloud/alpine-curl
+[swap]       command:
+[swap]         - ps
+[swap]       args:
+[swap]         - "aux"
+[swap]     # securityContext specified so will run as
+[swap]     # user 2000 instead of 1001
+

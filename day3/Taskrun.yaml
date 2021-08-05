@@ -1,0 +1,8 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: tekton-task-assignment-run-
+spec:
+  taskRef:
+    name: tekton-task-assignment
+
